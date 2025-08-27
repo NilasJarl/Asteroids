@@ -11,3 +11,4 @@ PLAYER_TURN_SPEED = 300
 PLAYER_SPEED = 200
 
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0) #color black for the screen
