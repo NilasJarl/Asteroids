@@ -7,6 +7,8 @@ from asteroidfield import AsteroidField
 from shot import Shot
 from uielement import UIElement
 
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 
 class GameState(Enum):
     QUIT = -1
@@ -14,11 +16,12 @@ class GameState(Enum):
     GAME = 1
     GAMETWO = 2
     END = 3
+    MENU = 4
 
 
 def title_screen(screen):
     op_btn = UIElement(
-        center_position=(640, 300),
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100),
         font_size=30,
         bg_rgb=BLACK,
         text_rgb=WHITE,
@@ -26,15 +29,23 @@ def title_screen(screen):
         action=GameState.GAME,
     )
     tp_btn = UIElement(
-        center_position=(640, 400),
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
         font_size=30,
         bg_rgb=BLACK,
         text_rgb=WHITE,
         text="Two Player",
         action=GameState.GAMETWO,
     )
+    menu_btn = UIElement(
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 100),
+        font_size=30,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="Menu",
+        action=GameState.MENU,
+    )
     quit_btn = UIElement(
-        center_position=(640, 500),
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 200),
         font_size=30,
         bg_rgb=BLACK,
         text_rgb=WHITE,
@@ -53,8 +64,8 @@ def title_screen(screen):
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
 
-    asteroidsfield = AsteroidField()
-    buttons = [op_btn, tp_btn, quit_btn]
+    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT)
+    buttons = [op_btn, tp_btn, menu_btn, quit_btn]
 
     while True:
         mouse_up = False
@@ -74,6 +85,81 @@ def title_screen(screen):
 
         pygame.display.flip()
         dt = clock.tick(120) / 1000
+def menu_screen(screen):
+    res = UIElement(
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 200),
+        font_size=50,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="Select Resolution Below:",
+        action=None,
+    )
+    low_res = UIElement(
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50),
+        font_size=30,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="1280*720",
+        action=GameState.TITLE,
+    )
+    med_res = UIElement(
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+        font_size=30,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="1920*1080",
+        action=GameState.TITLE,
+    )
+    high_res = UIElement(
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2  + 50),
+        font_size=30,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="2560*1440",
+        action=GameState.TITLE,
+    )
+    back_btn = UIElement(
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 200),
+        font_size=50,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="Back",
+        action=GameState.TITLE,
+    )
+     #time keepking
+    clock = pygame.time.Clock()
+    dt = 0
+
+    #groups
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    asteroids = pygame.sprite.Group()
+
+    Asteroid.containers = (asteroids, updatable, drawable)
+    AsteroidField.containers = (updatable)
+
+    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT)
+    buttons = [res, low_res, med_res, high_res, back_btn]
+
+    while True:
+        mouse_up = False
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                mouse_up = True
+        screen.fill(BLACK)
+        updatable.update(dt)
+        for draw in drawable:
+            draw.draw(screen)
+
+        for button in buttons:
+            ui_action = button.update(pygame.mouse.get_pos(), mouse_up)
+            if ui_action is not None:
+                return ui_action
+            button.draw(screen)
+
+        pygame.display.flip()
+        dt = clock.tick(120) / 1000    
+
 
 def game_screen(screen, num_players):
 
@@ -104,7 +190,7 @@ def game_screen(screen, num_players):
         player_two_alive = True
         player_two = Player(2, SCREEN_WIDTH / 2 + 50, SCREEN_HEIGHT / 2 -50)
 
-    asteroidsfield = AsteroidField()
+    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     #game loop
     while True:
@@ -152,7 +238,7 @@ def game_screen(screen, num_players):
 def end_screen(screen, num_players, score, score_two):
     
     game_over = UIElement(
-        center_position=(640, 200),
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 200),
         font_size=80,
         bg_rgb=RED,
         text_rgb=WHITE,
@@ -160,7 +246,7 @@ def end_screen(screen, num_players, score, score_two):
         action=None,
     )
     player_score = UIElement(
-        center_position=(640, 300),
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100),
         font_size=30,
         bg_rgb=BLACK,
         text_rgb=WHITE,
@@ -168,7 +254,7 @@ def end_screen(screen, num_players, score, score_two):
         action=None,
     )
     quit_btn = UIElement(
-        center_position=(640, 500),
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 100),
         font_size=50,
         bg_rgb=BLACK,
         text_rgb=WHITE,
@@ -178,7 +264,7 @@ def end_screen(screen, num_players, score, score_two):
     buttons = [game_over, player_score, quit_btn]
     if num_players >= 2:    
         player_two_score = UIElement(
-            center_position=(640, 400),
+            center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
             font_size=30,
             bg_rgb=BLACK,
             text_rgb=RED,
@@ -200,7 +286,7 @@ def end_screen(screen, num_players, score, score_two):
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
 
-    asteroidsfield = AsteroidField()
+    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT)
 
 
     while True:
@@ -244,6 +330,8 @@ def main():
         if game_state == GameState.GAMETWO:
             num_players = 2
             game_state, score, score_two = game_screen(screen, num_players)
+        if game_state == GameState.MENU:
+            game_state = menu_screen(screen)
 
         if game_state == GameState.END:
             game_state = end_screen(screen, num_players, score, score_two)
