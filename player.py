@@ -24,7 +24,7 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen):
-        #draw the player on the screen in their color, in the trinagle shape witha  line eidth of 2
+        #draw the player on the screen in their color, in the trinagle shape witha  line width of 2
             pygame.draw.polygon(screen, self.color, self.triangle(), 2) 
         
     def rotate(self, dt):

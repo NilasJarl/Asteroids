@@ -1,9 +1,9 @@
 import pygame
-from constants import WHITE, BLUE, GREEN, RED, BLACK
+
 
 def create_surface_with_text(text, font_size, text_rgb, bg_rgb):
     """ Returns surface with text written on """
-    font = pygame.freetype.SysFont("Courier", font_size, bold=True)
+    font = pygame.freetype.SysFont("Ariel", font_size, bold=True)
     surface, _ = font.render(text=text, fgcolor=text_rgb, bgcolor=bg_rgb)
     return surface.convert_alpha()
 
@@ -61,46 +61,3 @@ class UIElement(pygame.sprite.Sprite):
     def draw(self, surface):
         """ Draws element onto a surface """
         surface.blit(self.image, self.rect)
-
-def main():
-    pygame.init()
-
-    screen = pygame.display.set_mode((800, 600))
-
-    # create a ui element
-    uielement = UIElement(
-        center_position=(400, 400),
-        font_size=30,
-        bg_rgb=BLUE,
-        text_rgb=WHITE,
-        text="Hello World",
-        action = None,
-    )
-    quit_btn = UIElement(
-        center_position=(400, 500),
-        font_size=30,
-        bg_rgb=BLUE,
-        text_rgb=WHITE,
-        text="Quit",
-        action=GameState.QUIT,
-    )
-
-    # main loop
-    while True:
-        mouse_up = False
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                mouse_up = True
-        screen.fill(BLUE)
-        uielement.update(pygame.mouse.get_pos(), mouse_up)
-        ui_action = quit_btn.update(pygame.mouse.get_pos(), mouse_up)
-        if ui_action is not None:
-            return
-        uielement.draw(screen)
-        quit_btn.draw(screen)
-        pygame.display.flip()
-
-
-# call main when the script is run
-if __name__ == "__main__":
-    main()
