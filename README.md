@@ -4,6 +4,7 @@ Arcade-style Asteroids game for 1–2 players.
 
 ## Features
 - 1–2 players
+- Resolution selection
 - Difficulty selection
 - Score keeping
 - End screen
