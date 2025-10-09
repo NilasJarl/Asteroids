@@ -25,7 +25,7 @@ class UIElement(pygame.sprite.Sprite):
         self._font_size = font_size
         self._bg_rgb = bg_rgb
         self._text_rgb = text_rgb
-        self._action = action
+        self.action = action
         self._build_images()
         super().__init__()
     def _build_images(self):
@@ -64,7 +64,7 @@ class UIElement(pygame.sprite.Sprite):
         if self.rect.collidepoint(mouse_pos):
             self.mouse_over = True
             if mouse_up:
-                return self._action
+                return self.action
         else:
             self.mouse_over = False
 

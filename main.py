@@ -52,7 +52,7 @@ def title_screen(screen, difficulty):
         font_size=30,
         bg_rgb=BLACK,
         text_rgb=WHITE,
-        text="Menu",
+        text="Settings",
         action=GameState.MENU,
     )
     quit_btn = UIElement(
@@ -73,7 +73,7 @@ def title_screen(screen, difficulty):
     asteroids = pygame.sprite.Group()
 
     Asteroid.containers = (asteroids, updatable, drawable)
-    AsteroidField.containers = (updatable)
+    AsteroidField.containers = (updatable,)
 
     asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT, difficulty.value)
     buttons = [op_btn, tp_btn, menu_btn, quit_btn]
@@ -206,7 +206,7 @@ def menu_screen(screen, difficulty):
 
 
     Asteroid.containers = (asteroids, updatable, drawable)
-    AsteroidField.containers = (updatable)
+    AsteroidField.containers = (updatable,)
     asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT, difficulty.value)
 
     menu_buttons = [res, low_res, med_res, high_res,dif, dif_easy, dif_nor, dif_hard, dif_isn, back_btn]
@@ -260,7 +260,7 @@ def game_screen(screen, num_players, difficulty):
     shots = pygame.sprite.Group()
     Shot.containers = (shots, updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
-    AsteroidField.containers = (updatable)
+    AsteroidField.containers = (updatable,)
     Player.containers = (updatable, drawable)
 
 
@@ -269,10 +269,12 @@ def game_screen(screen, num_players, difficulty):
     score_two = 0
     player_alive = True
     player_two_alive = False
-    player = Player(1, SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT / 2 + 50)
-    if num_players >= 2:
+    if num_players == 1:
+        player = Player(1, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    elif num_players >= 2:
+        player = Player(1, SCREEN_WIDTH / 2 -25, SCREEN_HEIGHT / 2)
         player_two_alive = True
-        player_two = Player(2, SCREEN_WIDTH / 2 + 50, SCREEN_HEIGHT / 2 -50)
+        player_two = Player(2, SCREEN_WIDTH / 2 + 25, SCREEN_HEIGHT / 2)
 
     asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT, difficulty.value)
 
@@ -287,13 +289,12 @@ def game_screen(screen, num_players, difficulty):
         for draw in drawable:
             draw.draw(screen)
         for asteroid in asteroids:
-            if asteroid.collision(player):
+            if player_alive and asteroid.collision(player):
                 player_alive = False
                 player.kill()
-            if num_players >= 2:
-                if asteroid.collision(player_two):
-                    player_two_alive = False
-                    player_two.kill()
+            if player_two_alive and asteroid.collision(player_two):
+                player_two_alive = False
+                player_two.kill()
             for shot in shots:
                 if asteroid.collision(shot):
                     if shot.color == WHITE:
@@ -322,7 +323,7 @@ def game_screen(screen, num_players, difficulty):
 def end_screen(screen, num_players, score, score_two, difficulty):
     
     game_over = UIElement(
-        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 200),
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 300),
         font_size=80,
         bg_rgb=RED,
         text_rgb=WHITE,
@@ -330,31 +331,48 @@ def end_screen(screen, num_players, score, score_two, difficulty):
         action=None,
     )
     player_score = UIElement(
-        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100),
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 200),
         font_size=30,
         bg_rgb=BLACK,
         text_rgb=WHITE,
         text=f"Player One Score was: {score}",
         action=None,
     )
-    quit_btn = UIElement(
+    rty_btn = UIElement(
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+        font_size=50,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="Retry",
+        action=GameState.GAME,
+    )
+    back_btn = UIElement(
         center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 100),
+        font_size=50,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="Back to Menu",
+        action=GameState.TITLE,
+    )
+    quit_btn = UIElement(
+        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 200),
         font_size=50,
         bg_rgb=BLACK,
         text_rgb=WHITE,
         text="Quit",
         action=GameState.QUIT,
     )
-    buttons = [game_over, player_score, quit_btn]
+    buttons = [game_over, player_score,rty_btn, back_btn, quit_btn]
     if num_players >= 2:    
         player_two_score = UIElement(
-            center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+            center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100),
             font_size=30,
             bg_rgb=BLACK,
             text_rgb=RED,
             text=f"Player Two score was: {score_two}",
             action=None,
         )
+        rty_btn.action = GameState.GAMETWO
         buttons.append(player_two_score)
     
 
@@ -368,7 +386,7 @@ def end_screen(screen, num_players, score, score_two, difficulty):
     asteroids = pygame.sprite.Group()
 
     Asteroid.containers = (asteroids, updatable, drawable)
-    AsteroidField.containers = (updatable)
+    AsteroidField.containers = (updatable,)
 
     asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT, difficulty.value)
 

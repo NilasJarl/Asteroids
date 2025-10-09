@@ -11,6 +11,13 @@ class AsteroidField(pygame.sprite.Sprite):
         self.SCREEN_HEIGHT = SCREEN_HEIGHT
         self.spawn_timer = 0.0
         self.dif_factor = difficulty
+        match SCREEN_HEIGHT:
+            case 720:
+               self.spawn_modifier = 1 
+            case 1080:
+                self.spawn_modifier = 1.5
+            case 1440:
+                self.spawn_modifier = 2
         self.edges = [
             [
                 pygame.Vector2(1, 0),
@@ -40,7 +47,7 @@ class AsteroidField(pygame.sprite.Sprite):
 
     def update(self, dt):
         self.spawn_timer += dt
-        if self.spawn_timer > (ASTEROID_SPAWN_RATE / self.dif_factor):
+        if self.spawn_timer > ((ASTEROID_SPAWN_RATE / self.spawn_modifier)/ self.dif_factor):
             self.spawn_timer = 0
 
             # spawn a new asteroid at a random edge
