@@ -58,7 +58,7 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt  # or: pip install pygame
 ```
 
-## RUN
+## Run
 ```bash
 Using uv:
 
