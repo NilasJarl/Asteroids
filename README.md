@@ -1,10 +1,10 @@
 # Asteroids
 
-Arcade-style Asteroids game for 1–2 players.
-Originally made a part of the guided project for Boot.Dev
-As part of the first personal project I decided to expand on the scope of the.
-I had already added score keeping and two player mode for fun one my own.
-But I challenged myself to add a menu system with various options which I've so far succeded with! :D
+Arcade-style Asteroids game for 1–2 players.  
+Originally made a part of the guided project for Boot.dev.  
+As part of the first personal project I decided to expand on the scope of the.  
+I had already added score keeping and two player mode for fun one my own.  
+But I challenged myself to add a menu system with various options which I've so far succeded with! :D  
 On my to do list is:
 - permanent and/or temporay buffs/enhancements
 - time based difficulty scaling
@@ -19,15 +19,15 @@ On my to do list is:
 ## Controls
 Mouse for menu navigation
 
-In game:
-Player 1: WASD + Space
-Player 2: Arrow Keys + Left Ctrl
+In game:  
+Player 1: WASD + Space  
+Player 2: Arrow Keys + Left Ctrl  
 
 ## Resolutions selection
 Allows for switching between the following windowed resolutions:
 - 1280*720
 - 1920*1080
-- 2556*1440
+- 2556*1440  
 _Note: Increasing resolution will also increase asteroids spawn rate to compensate for the bigger play area_
 
 ## Defficulty selection
@@ -67,4 +67,5 @@ uv run python main.py
 Using Python:
 
 python main.py
+
 
