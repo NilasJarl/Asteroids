@@ -20,26 +20,36 @@ class UIElement(pygame.sprite.Sprite):
             text_rgb (text colour) - tuple (r, g, b)
         """
         self.mouse_over = False  # indicates if the mouse is over the element
-        self.action = action
+        self._center_position = center_position
+        self._text = text
+        self._font_size = font_size
+        self._bg_rgb = bg_rgb
+        self._text_rgb = text_rgb
+        self._action = action
+        self._build_images()
+        super().__init__()
+    def _build_images(self):
         # create the default image
         default_image = create_surface_with_text(
-            text=text, font_size=font_size, text_rgb=text_rgb, bg_rgb=bg_rgb
+            text=self._text, font_size=self._font_size, text_rgb=self._text_rgb, bg_rgb=self._bg_rgb
         )
 
         # create the image that shows when mouse is over the element
         highlighted_image = create_surface_with_text(
-            text=text, font_size=font_size * 1.2, text_rgb=text_rgb, bg_rgb=bg_rgb
+            text=self._text, font_size=self._font_size * 1.2, text_rgb=self._text_rgb, bg_rgb=self._bg_rgb
         )
 
         # add both images and their rects to lists
         self.images = [default_image, highlighted_image]
         self.rects = [
-            default_image.get_rect(center=center_position),
-            highlighted_image.get_rect(center=center_position),
+            default_image.get_rect(center=self._center_position),
+            highlighted_image.get_rect(center=self._center_position),
         ]
 
-        # calls the init method of the parent sprite class
-        super().__init__()
+    def set_text_color(self, color):
+        self._text_rgb = color
+        self._build_images()
+        
 
     # properties that vary the image and its rect when the mouse is over the element
     @property
@@ -54,7 +64,7 @@ class UIElement(pygame.sprite.Sprite):
         if self.rect.collidepoint(mouse_pos):
             self.mouse_over = True
             if mouse_up:
-                return self.action
+                return self._action
         else:
             self.mouse_over = False
 

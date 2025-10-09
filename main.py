@@ -23,8 +23,14 @@ class Resolution(Enum):
     MED = 1080
     HIGH = 1440
 
+class Difficulty(Enum):
+    EASY = 0.9
+    NORMAL = 1
+    HARD = 1.1
+    INSANE = 1.5 
 
-def title_screen(screen):
+
+def title_screen(screen, difficulty):
     op_btn = UIElement(
         center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100),
         font_size=30,
@@ -69,7 +75,7 @@ def title_screen(screen):
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
 
-    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT)
+    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT, difficulty.value)
     buttons = [op_btn, tp_btn, menu_btn, quit_btn]
 
     while True:
@@ -90,19 +96,19 @@ def title_screen(screen):
 
         pygame.display.flip()
         dt = clock.tick(120) / 1000
-def menu_screen(screen):
+def menu_screen(screen, difficulty):
     global SCREEN_WIDTH
     global SCREEN_HEIGHT
     res = UIElement(
-        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 200),
-        font_size=50,
+        center_position=(SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 200),
+        font_size=40,
         bg_rgb=BLACK,
         text_rgb=WHITE,
-        text="Select Resolution Below:",
+        text="Select Resolution:",
         action=None,
     )
     low_res = UIElement(
-        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50),
+        center_position=(SCREEN_WIDTH / 2 + 150, SCREEN_HEIGHT / 2 - 250),
         font_size=30,
         bg_rgb=BLACK,
         text_rgb=WHITE,
@@ -110,7 +116,7 @@ def menu_screen(screen):
         action=Resolution.LOW,
     )
     med_res = UIElement(
-        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+        center_position=(SCREEN_WIDTH / 2 + 150, SCREEN_HEIGHT / 2 - 200),
         font_size=30,
         bg_rgb=BLACK,
         text_rgb=WHITE,
@@ -118,12 +124,52 @@ def menu_screen(screen):
         action=Resolution.MED,
     )
     high_res = UIElement(
-        center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2  + 50),
+        center_position=(SCREEN_WIDTH / 2 + 150, SCREEN_HEIGHT / 2  - 150),
         font_size=30,
         bg_rgb=BLACK,
         text_rgb=WHITE,
         text="2560*1440",
         action=Resolution.HIGH,
+    )
+    dif = UIElement(
+        center_position=(SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 ),
+        font_size=40,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="Select Difficulty:",
+        action=None,
+    )
+    dif_easy = UIElement(
+        center_position=(SCREEN_WIDTH / 2 + 150, SCREEN_HEIGHT / 2 - 75),
+        font_size=30,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="Easy",
+        action=Difficulty.EASY,
+    )
+    dif_nor = UIElement(
+        center_position=(SCREEN_WIDTH / 2 + 150, SCREEN_HEIGHT / 2 - 25),
+        font_size=30,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="Normal",
+        action=Difficulty.NORMAL,
+    )
+    dif_hard = UIElement(
+        center_position=(SCREEN_WIDTH / 2 + 150, SCREEN_HEIGHT / 2  + 25),
+        font_size=30,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="Hard",
+        action=Difficulty.HARD,
+    )
+    dif_isn = UIElement(
+        center_position=(SCREEN_WIDTH / 2 + 150, SCREEN_HEIGHT / 2  + 75),
+        font_size=30,
+        bg_rgb=BLACK,
+        text_rgb=WHITE,
+        text="Insanity",
+        action=Difficulty.INSANE,
     )
     back_btn = UIElement(
         center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 200),
@@ -140,12 +186,30 @@ def menu_screen(screen):
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+    match SCREEN_HEIGHT:
+        case 720:
+            low_res.set_text_color(RED)
+        case 1080:
+            med_res.set_text_color(RED)
+        case 1440:
+            high_res.set_text_color(RED)
+
+    match difficulty:
+        case Difficulty.EASY:
+            dif_easy.set_text_color(RED)
+        case Difficulty.NORMAL:
+            dif_nor.set_text_color(RED)
+        case Difficulty.HARD:
+            dif_hard.set_text_color(RED)
+        case Difficulty.INSANE:
+            dif_isn.set_text_color(RED)
+
 
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
-    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT)
+    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT, difficulty.value)
 
-    menu_buttons = [res, low_res, med_res, high_res, back_btn]
+    menu_buttons = [res, low_res, med_res, high_res,dif, dif_easy, dif_nor, dif_hard, dif_isn, back_btn]
 
     while True:
         mouse_up = False
@@ -158,28 +222,30 @@ def menu_screen(screen):
             draw.draw(screen)
         for button in menu_buttons:
             ui_action = button.update(pygame.mouse.get_pos(), mouse_up)
-            if ui_action == Resolution.LOW:
-                SCREEN_WIDTH = 1280
-                SCREEN_HEIGHT = 720
-                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-                return GameState.MENU, screen
-            if ui_action == Resolution.MED:
-                SCREEN_WIDTH = 1920
-                SCREEN_HEIGHT = 1080
-                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-                return GameState.MENU, screen
-            if ui_action == Resolution.HIGH:
-                SCREEN_WIDTH = 2560
-                SCREEN_HEIGHT = 1440
-                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-                return GameState.MENU, screen
-            if ui_action == GameState.TITLE:
-                return ui_action, screen         
+            if ui_action is not None:
+                match ui_action:
+                    case GameState.TITLE:
+                       return ui_action, screen, difficulty 
+                    case Resolution.LOW:
+                        SCREEN_WIDTH = 1280
+                        SCREEN_HEIGHT = 720
+                        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                    case Resolution.MED:
+                        SCREEN_WIDTH = 1920
+                        SCREEN_HEIGHT = 1080
+                        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                    case Resolution.HIGH:
+                        SCREEN_WIDTH = 2560
+                        SCREEN_HEIGHT = 1440
+                        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                    case Difficulty.EASY | Difficulty.NORMAL | Difficulty.HARD | Difficulty.INSANE:    
+                        difficulty = ui_action
+                return GameState.MENU, screen, difficulty        
             button.draw(screen)
         pygame.display.flip()
         dt = clock.tick(120) / 1000
 
-def game_screen(screen, num_players):
+def game_screen(screen, num_players, difficulty):
 
     #time keepking
     clock = pygame.time.Clock()
@@ -208,7 +274,7 @@ def game_screen(screen, num_players):
         player_two_alive = True
         player_two = Player(2, SCREEN_WIDTH / 2 + 50, SCREEN_HEIGHT / 2 -50)
 
-    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT)
+    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT, difficulty.value)
 
     #game loop
     while True:
@@ -253,7 +319,7 @@ def game_screen(screen, num_players):
         dt = clock.tick(120) / 1000
 
 
-def end_screen(screen, num_players, score, score_two):
+def end_screen(screen, num_players, score, score_two, difficulty):
     
     game_over = UIElement(
         center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 200),
@@ -304,7 +370,7 @@ def end_screen(screen, num_players, score, score_two):
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
 
-    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT)
+    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT, difficulty.value)
 
 
     while True:
@@ -337,23 +403,24 @@ def main():
     #sets the screen width and height
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     game_state = GameState.TITLE
+    difficulty = Difficulty.NORMAL
     num_players = 1
     while True:
         if game_state == GameState.TITLE:
-            game_state = title_screen(screen)
+            game_state = title_screen(screen, difficulty)
 
         if game_state == GameState.MENU:
-            game_state, screen = menu_screen(screen)
+            game_state, screen, difficulty = menu_screen(screen, difficulty)
 
         if game_state == GameState.GAME:
-            game_state, score, score_two = game_screen(screen, num_players)
+            game_state, score, score_two = game_screen(screen, num_players, difficulty)
         
         if game_state == GameState.GAMETWO:
             num_players = 2
-            game_state, score, score_two = game_screen(screen, num_players)
+            game_state, score, score_two = game_screen(screen, num_players, difficulty)
 
         if game_state == GameState.END:
-            game_state = end_screen(screen, num_players, score, score_two)
+            game_state = end_screen(screen, num_players, score, score_two, difficulty)
 
         if game_state == GameState.QUIT:
             pygame.quit()
