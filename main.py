@@ -18,6 +18,11 @@ class GameState(Enum):
     END = 3
     MENU = 4
 
+class Resolution(Enum):
+    LOW = 720
+    MED = 1080
+    HIGH = 1440
+
 
 def title_screen(screen):
     op_btn = UIElement(
@@ -86,6 +91,8 @@ def title_screen(screen):
         pygame.display.flip()
         dt = clock.tick(120) / 1000
 def menu_screen(screen):
+    global SCREEN_WIDTH
+    global SCREEN_HEIGHT
     res = UIElement(
         center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 200),
         font_size=50,
@@ -100,7 +107,7 @@ def menu_screen(screen):
         bg_rgb=BLACK,
         text_rgb=WHITE,
         text="1280*720",
-        action=GameState.TITLE,
+        action=Resolution.LOW,
     )
     med_res = UIElement(
         center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
@@ -108,7 +115,7 @@ def menu_screen(screen):
         bg_rgb=BLACK,
         text_rgb=WHITE,
         text="1920*1080",
-        action=GameState.TITLE,
+        action=Resolution.MED,
     )
     high_res = UIElement(
         center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2  + 50),
@@ -116,7 +123,7 @@ def menu_screen(screen):
         bg_rgb=BLACK,
         text_rgb=WHITE,
         text="2560*1440",
-        action=GameState.TITLE,
+        action=Resolution.HIGH,
     )
     back_btn = UIElement(
         center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 200),
@@ -129,7 +136,6 @@ def menu_screen(screen):
      #time keepking
     clock = pygame.time.Clock()
     dt = 0
-
     #groups
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
@@ -137,9 +143,9 @@ def menu_screen(screen):
 
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
-
     asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT)
-    buttons = [res, low_res, med_res, high_res, back_btn]
+
+    menu_buttons = [res, low_res, med_res, high_res, back_btn]
 
     while True:
         mouse_up = False
@@ -150,16 +156,28 @@ def menu_screen(screen):
         updatable.update(dt)
         for draw in drawable:
             draw.draw(screen)
-
-        for button in buttons:
+        for button in menu_buttons:
             ui_action = button.update(pygame.mouse.get_pos(), mouse_up)
-            if ui_action is not None:
-                return ui_action
+            if ui_action == Resolution.LOW:
+                SCREEN_WIDTH = 1280
+                SCREEN_HEIGHT = 720
+                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                return GameState.MENU, screen
+            if ui_action == Resolution.MED:
+                SCREEN_WIDTH = 1920
+                SCREEN_HEIGHT = 1080
+                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                return GameState.MENU, screen
+            if ui_action == Resolution.HIGH:
+                SCREEN_WIDTH = 2560
+                SCREEN_HEIGHT = 1440
+                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                return GameState.MENU, screen
+            if ui_action == GameState.TITLE:
+                return ui_action, screen         
             button.draw(screen)
-
         pygame.display.flip()
-        dt = clock.tick(120) / 1000    
-
+        dt = clock.tick(120) / 1000
 
 def game_screen(screen, num_players):
 
@@ -324,14 +342,15 @@ def main():
         if game_state == GameState.TITLE:
             game_state = title_screen(screen)
 
+        if game_state == GameState.MENU:
+            game_state, screen = menu_screen(screen)
+
         if game_state == GameState.GAME:
             game_state, score, score_two = game_screen(screen, num_players)
         
         if game_state == GameState.GAMETWO:
             num_players = 2
             game_state, score, score_two = game_screen(screen, num_players)
-        if game_state == GameState.MENU:
-            game_state = menu_screen(screen)
 
         if game_state == GameState.END:
             game_state = end_screen(screen, num_players, score, score_two)
