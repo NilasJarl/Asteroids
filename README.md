@@ -1,11 +1,43 @@
-Asteroids game for up to two players!
+# Asteroids
 
-To run the game uv and pygame must me installed.
+Arcade-style Asteroids game for 1–2 players.
 
-use:
-uv run main.py x
+## Features
+- 1–2 players
+- Difficulty selection
+- Score keeping
+- End screen
 
-where x is the number of players 1 or 2.
+## Requirements
+- Python 3.10+
+- pygame
+- Optional: uv (package manager)
 
-controls are WASD + Space for player one and arrow keys and Left CTRL for player_two
+## Install
 
+Using uv:
+```bash
+uv venv
+uv pip install -e .
+# or ensure pygame is installed:
+uv pip install pygame
+
+Using pip:
+
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt  # or: pip install pygame
+
+Run
+Using uv:
+
+uv run python main.py 
+
+Using Python:
+
+python main.py
+
+Controls:
+
+Player 1: WASD + Space
+Player 2: Arrow Keys + Left Ctrl
