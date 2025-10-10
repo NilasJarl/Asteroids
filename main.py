@@ -95,7 +95,7 @@ def title_screen(screen, difficulty):
             button.draw(screen)
 
         pygame.display.flip()
-        dt = clock.tick(120) / 1000
+        dt = clock.tick(60) / 1000
 def menu_screen(screen, difficulty):
     global SCREEN_WIDTH
     global SCREEN_HEIGHT
@@ -243,7 +243,7 @@ def menu_screen(screen, difficulty):
                 return GameState.MENU, screen, difficulty        
             button.draw(screen)
         pygame.display.flip()
-        dt = clock.tick(120) / 1000
+        dt = clock.tick(60) / 1000
 
 def game_screen(screen, num_players, difficulty):
 
@@ -317,7 +317,7 @@ def game_screen(screen, num_players, difficulty):
             
 
         pygame.display.flip()
-        dt = clock.tick(120) / 1000
+        dt = clock.tick(60) / 1000
 
 
 def end_screen(screen, num_players, score, score_two, difficulty):
@@ -409,7 +409,7 @@ def end_screen(screen, num_players, score, score_two, difficulty):
             button.draw(screen)
 
         pygame.display.flip()
-        dt = clock.tick(120) / 1000
+        dt = clock.tick(60) / 1000
 
 
 def main():
@@ -431,6 +431,7 @@ def main():
             game_state, screen, difficulty = menu_screen(screen, difficulty)
 
         if game_state == GameState.GAME:
+            num_players = 1
             game_state, score, score_two = game_screen(screen, num_players, difficulty)
         
         if game_state == GameState.GAMETWO:
