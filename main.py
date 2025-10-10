@@ -1,7 +1,7 @@
 import pygame
 from enum import Enum
 from constants import *
-from player import Player
+from player import Player, Buff
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
@@ -17,6 +17,8 @@ class GameState(Enum):
     GAMETWO = 2
     END = 3
     MENU = 4
+
+
 
 class Resolution(Enum):
     LOW = 720
@@ -279,10 +281,11 @@ def game_screen(screen, num_players, difficulty):
     asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT, difficulty.value)
 
     #game loop
+    player.buff(Buff.MULTISHOT)
     while True:
         for event in pygame.event.get(): #Stops the loop if the windows is closed
             if event.type == pygame.QUIT:
-                return
+                return GameState.QUIT, score, score_two
             
         screen.fill(BLACK) #turns screen black.
         updatable.update(dt)
@@ -290,11 +293,17 @@ def game_screen(screen, num_players, difficulty):
             draw.draw(screen)
         for asteroid in asteroids:
             if player_alive and asteroid.collision(player):
-                player_alive = False
-                player.kill()
+                if player.buff == Buff.INVULNERABILITY:
+                    asteroid.split()
+                else:
+                    player_alive = False
+                    player.kill()
             if player_two_alive and asteroid.collision(player_two):
-                player_two_alive = False
-                player_two.kill()
+                if player_two.buff == Buff.INVULNERABILITY:
+                    asteroid.split()
+                else:
+                    player_two_alive = False
+                    player_two.kill()
             for shot in shots:
                 if asteroid.collision(shot):
                     if shot.color == WHITE:
@@ -415,14 +424,11 @@ def end_screen(screen, num_players, score, score_two, difficulty):
 def main():
     pygame.init()
     print("Starting Asteroids!")
-    print(f"Screen width: {SCREEN_WIDTH}")
-    print(f"Screen height: {SCREEN_HEIGHT}")
     
     #sets the screen width and height
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     game_state = GameState.TITLE
     difficulty = Difficulty.NORMAL
-    num_players = 1
     while True:
         if game_state == GameState.TITLE:
             game_state = title_screen(screen, difficulty)
