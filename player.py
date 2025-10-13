@@ -5,9 +5,9 @@ from shot import Shot
 from constants import *
 
 class Buff(Enum):
-    MACHINEGUN = 1
-    MULTISHOT = 2
-    INVULNERABILITY = 3
+    MACHINEGUN = "Machinegun"
+    MULTISHOT = "Multishot"
+    INVULNERABILITY = "Invulnerability"
 
 class Player(CircleShape):
     def __init__(self, player_num, x, y):
@@ -19,7 +19,7 @@ class Player(CircleShape):
             self.color = WHITE 
         elif self.player_num == 2:
             self.color = RED 
-        self.bufftype = None
+        self.buff = None
         self.buff_timer = 0
 
     # in the player class
@@ -40,10 +40,11 @@ class Player(CircleShape):
 
     def update(self, dt):
         self.timer -= dt
-        if self.buff_timer > 0:
+        if self.buff is not None:
             self.buff_timer -= dt
             if self.buff_timer <= 0:
                 self.buff = None
+                self.buff_timer = None
         keys = pygame.key.get_pressed()
         if self.player_num == 1:
             if keys[pygame.K_a]:
@@ -72,8 +73,8 @@ class Player(CircleShape):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         self.position += forward * PLAYER_SPEED * dt
     
-    def buff(self, buff):
-        self.bufftype = buff
+    def buff_player(self, buff):
+        self.buff = buff
         self.buff_timer = BUFF_DURATION
 
 
@@ -81,12 +82,12 @@ class Player(CircleShape):
         if not self.timer > 0:
             new_shot = Shot(self.position.x, self.position.y, SHOT_RADIUS, self.color)
             new_shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
-            if self.bufftype == Buff.MULTISHOT:
+            if self.buff == Buff.MULTISHOT:
                 new_shot2 = Shot(self.position.x, self.position.y, SHOT_RADIUS, self.color)
                 new_shot2.velocity = pygame.Vector2(0, 1).rotate(self.rotation - 10) * PLAYER_SHOOT_SPEED
                 new_shot3 = Shot(self.position.x, self.position.y, SHOT_RADIUS, self.color)
                 new_shot3.velocity = pygame.Vector2(0, 1).rotate(self.rotation + 10) * PLAYER_SHOOT_SPEED
-            if self.bufftype == Buff.MACHINEGUN:
+            if self.buff == Buff.MACHINEGUN:
                 self.timer = PLAYER_SHOOT_COOLDOWN / 3
             else:
                 self.timer = PLAYER_SHOOT_COOLDOWN

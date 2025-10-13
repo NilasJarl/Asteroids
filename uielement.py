@@ -10,7 +10,7 @@ def create_surface_with_text(text, font_size, text_rgb, bg_rgb):
 class UIElement(pygame.sprite.Sprite):
     """ An user interface element that can be added to a surface """
 
-    def __init__(self, center_position, text, font_size, bg_rgb, text_rgb, action):
+    def __init__(self, center_position, text, font_size, bg_rgb, text_rgb, action=None):
         """
         Args:
             center_position - tuple (x, y)
@@ -54,11 +54,11 @@ class UIElement(pygame.sprite.Sprite):
     # properties that vary the image and its rect when the mouse is over the element
     @property
     def image(self):
-        return self.images[1] if self.mouse_over else self.images[0]
+        return self.images[1] if self.mouse_over and self.action is not None else self.images[0]
 
     @property
     def rect(self):
-        return self.rects[1] if self.mouse_over else self.rects[0]
+        return self.rects[1] if self.mouse_over and self.action is not None else self.rects[0]
         
     def update(self, mouse_pos, mouse_up):
         if self.rect.collidepoint(mouse_pos):

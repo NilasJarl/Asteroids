@@ -2,8 +2,8 @@ import pygame
 from enum import Enum
 from constants import *
 from player import Player, Buff
-from asteroid import Asteroid
-from asteroidfield import AsteroidField
+from asteroid_and_buff import Asteroid, Buffoid
+from asteroidfield_and_buff_field import AsteroidField
 from shot import Shot
 from uielement import UIElement
 
@@ -260,8 +260,10 @@ def game_screen(screen, num_players, difficulty):
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    buffs = pygame.sprite.Group()
     Shot.containers = (shots, updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
+    Buffoid.containers = (buffs, updatable, drawable)
     AsteroidField.containers = (updatable,)
     Player.containers = (updatable, drawable)
 
@@ -278,10 +280,10 @@ def game_screen(screen, num_players, difficulty):
         player_two_alive = True
         player_two = Player(2, SCREEN_WIDTH / 2 + 25, SCREEN_HEIGHT / 2)
 
-    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT, difficulty.value)
+    asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT, difficulty.value, num_players)
 
     #game loop
-    player.buff(Buff.MULTISHOT)
+    player.buff_player(Buff.MULTISHOT)
     while True:
         for event in pygame.event.get(): #Stops the loop if the windows is closed
             if event.type == pygame.QUIT:
@@ -312,17 +314,36 @@ def game_screen(screen, num_players, difficulty):
                         score_two += 100
                     shot.kill()
                     asteroid.split()
+        for buff in buffs:
+            if player_alive and buff.collision(player):
+                player.buff_player(buff.hit())
+                buff.kill()
+            if player_two_alive and buff.collision(player_two):
+                player_two.buff_player(buff.hit())
+                buff.kill()
+            for shot in shots:
+                if buff.collision(shot):
+                    if shot.color == WHITE:
+                        player.buff_player(buff.hit())
+                    elif shot.color == RED:
+                        player_two.buff_player(buff.hit())
+                    shot.kill()
+                    buff.kill()
         if not player_alive and not player_two_alive:
             print("Game over!")
             print(f"Player score was: {score}")
             if num_players >= 2:
                 print(f"Player two score was: {score_two}")
             return GameState.END, score, score_two
-        player_score = font.render(f"{score}", True, WHITE)
-        screen.blit(player_score, (5, 0))
+        player_score = f"{score}"
+        if player.buff is not None and player_alive:
+            player_score += f" {player.buff.value} {player.buff_timer:.0f}"
+        screen.blit(font.render(player_score, True, WHITE), (5, 0))
         if num_players >= 2:
-            player_two_score = font.render(f"{score_two}",True, RED)
-            screen.blit(player_two_score, (5, 25))
+            player_two_score = f"{score_two}"
+            if player_two.buff is not None and player_two_alive:
+                player_two_score += f" {player.buff.value} {player.buff_timer:.0f}"
+            screen.blit(font.render(player_two_score, True, RED), (5, 25))
             
 
         pygame.display.flip()
