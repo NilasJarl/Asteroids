@@ -46,7 +46,7 @@ Switch between following difficulties:
 - Insanity (1.5 factored asteroid spawn rate and asteroids speed)
 
 ## Temporay buffs
-Three buff type, shot or fly into the coloroed Asteroids to get them:  
+Three buff type, shot or fly into the coloroed Asteroids to get them, they last 60 seconds, but do not stack:  
 - Multishot, shot three shots per shot in a fan shape, given by Red Asteroids
 - Machinegun, triple the rate of fire, given by Blue Asteroids
 - Invulnerability, Unable to die, given by Green Asteroids  
@@ -83,5 +83,6 @@ Using Python:
 ```bash
 python main.py
 ```
+
 
 
