@@ -11,8 +11,8 @@ I have added the following functionality to the original game:
 - Menu system
 - Resolution selection (with increased spawn rate bassed on increasing resolution)
 - Difficulty selection  
+- Temporay buffs    
 On my to do list is:
-- Permanent and/or temporary buffs/enhancements
 - Time based difficulty scaling
 
 ## Features
@@ -20,6 +20,7 @@ On my to do list is:
 - 1–2 players
 - Resolution selection
 - Difficulty selection
+- Temporay buffs  
 - Score keeping
 - End screen
 
@@ -43,6 +44,13 @@ Switch between following difficulties:
 - Normal (1.0 factored asteroid spawn rate and asteroids speed)
 - Hard (1.1 factored asteroid spawn rate and asteroids speed)
 - Insanity (1.5 factored asteroid spawn rate and asteroids speed)
+
+## Temporay buffs
+Three buff type, shot or fly into the coloroed Asteroids to get them:  
+- Multishot, shot three shots per shot in a fan shape, given by Red Asteroids
+- Machinegun, triple the rate of fire, given by Blue Asteroids
+- Invulnerability, Unable to die, given by Green Asteroids  
+_Note: Not points will be given for asteroids destroyed by hitting them with ship while invulnerable_
 
 ## Requirements
 - Python 3.10+

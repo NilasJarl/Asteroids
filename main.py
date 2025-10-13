@@ -283,7 +283,6 @@ def game_screen(screen, num_players, difficulty):
     asteroidsfield = AsteroidField(SCREEN_WIDTH, SCREEN_HEIGHT, difficulty.value, num_players)
 
     #game loop
-    player.buff_player(Buff.MULTISHOT)
     while True:
         for event in pygame.event.get(): #Stops the loop if the windows is closed
             if event.type == pygame.QUIT:
