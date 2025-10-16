@@ -18,8 +18,6 @@ class GameState(Enum):
     END = 3
     MENU = 4
 
-
-
 class Resolution(Enum):
     LOW = 720
     MED = 1080
@@ -31,7 +29,7 @@ class Difficulty(Enum):
     HARD = 1.1
     INSANE = 1.5 
 
-
+#title screen is the main menu screen with four clickable buttons: Oneplayer, Twoplayer, Menu and Quit.
 def title_screen(screen, difficulty):
     op_btn = UIElement(
         center_position=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100),
@@ -90,6 +88,7 @@ def title_screen(screen, difficulty):
         for draw in drawable:
             draw.draw(screen)
 
+        #checks if a button is clicked on the screen and returns the action. 
         for button in buttons:
             ui_action = button.update(pygame.mouse.get_pos(), mouse_up)
             if ui_action is not None:
@@ -98,6 +97,8 @@ def title_screen(screen, difficulty):
 
         pygame.display.flip()
         dt = clock.tick(60) / 1000
+
+#Menu Screen is the settings screen, where you can adjust resolution of the window and difficulty
 def menu_screen(screen, difficulty):
     global SCREEN_WIDTH
     global SCREEN_HEIGHT
@@ -188,6 +189,8 @@ def menu_screen(screen, difficulty):
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+
+    #sets the selected resolution text to red to show the selected
     match SCREEN_HEIGHT:
         case 720:
             low_res.set_text_color(RED)
@@ -196,6 +199,7 @@ def menu_screen(screen, difficulty):
         case 1440:
             high_res.set_text_color(RED)
 
+    #sets the selected difficulty text to red to show the selected
     match difficulty:
         case Difficulty.EASY:
             dif_easy.set_text_color(RED)
@@ -222,12 +226,14 @@ def menu_screen(screen, difficulty):
         updatable.update(dt)
         for draw in drawable:
             draw.draw(screen)
+        #checks if a button is clicked on the screen and returns the action.     
         for button in menu_buttons:
             ui_action = button.update(pygame.mouse.get_pos(), mouse_up)
             if ui_action is not None:
                 match ui_action:
-                    case GameState.TITLE:
+                    case GameState.TITLE: #return to title
                        return ui_action, screen, difficulty 
+                    #set resolution as selected
                     case Resolution.LOW:
                         SCREEN_WIDTH = 1280
                         SCREEN_HEIGHT = 720
@@ -240,6 +246,7 @@ def menu_screen(screen, difficulty):
                         SCREEN_WIDTH = 2560
                         SCREEN_HEIGHT = 1440
                         screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                    #set difficulty as selected.    
                     case Difficulty.EASY | Difficulty.NORMAL | Difficulty.HARD | Difficulty.INSANE:    
                         difficulty = ui_action
                 return GameState.MENU, screen, difficulty        
@@ -247,12 +254,15 @@ def menu_screen(screen, difficulty):
         pygame.display.flip()
         dt = clock.tick(60) / 1000
 
+
+#this is the main game screen.
 def game_screen(screen, num_players, difficulty):
 
     #time keepking
     clock = pygame.time.Clock()
     dt = 0
-
+    
+    #font for the on screen text
     font = pygame.font.SysFont("Arial", 24)
 
     #groups
@@ -292,7 +302,9 @@ def game_screen(screen, num_players, difficulty):
         updatable.update(dt)
         for draw in drawable:
             draw.draw(screen)
+        #check for each asteroid if it collides with a player or a shot.
         for asteroid in asteroids:
+            #player are killed unless they have the invulnerability buff
             if player_alive and asteroid.collision(player):
                 if player.buff == Buff.INVULNERABILITY:
                     asteroid.split()
@@ -305,14 +317,17 @@ def game_screen(screen, num_players, difficulty):
                 else:
                     player_two_alive = False
                     player_two.kill()
+            #asteroid are split(or killed) killed if the collided with a shot and shot is killed
             for shot in shots:
                 if asteroid.collision(shot):
-                    if shot.color == WHITE:
+                    #which player hit is it determined by the shot color.
+                    if shot.color == WHITE: 
                         score += 100
                     elif shot.color == RED:
                         score_two += 100
                     shot.kill()
                     asteroid.split()
+        #check if a buff has hit a player or a shot an gives the buff to the player.            
         for buff in buffs:
             if player_alive and buff.collision(player):
                 player.buff_player(buff.hit())
@@ -328,6 +343,7 @@ def game_screen(screen, num_players, difficulty):
                         player_two.buff_player(buff.hit())
                     shot.kill()
                     buff.kill()
+        #if both players are dead stop the game and go to the End screen.            
         if not player_alive and not player_two_alive:
             print("Game over!")
             print(f"Player score was: {score}")
@@ -348,7 +364,7 @@ def game_screen(screen, num_players, difficulty):
         pygame.display.flip()
         dt = clock.tick(60) / 1000
 
-
+#game over screen, show score(s) and has a quit, a back to menu and a retry button. 
 def end_screen(screen, num_players, score, score_two, difficulty):
     
     game_over = UIElement(
@@ -440,7 +456,7 @@ def end_screen(screen, num_players, score, score_two, difficulty):
         pygame.display.flip()
         dt = clock.tick(60) / 1000
 
-
+#main run the game. 
 def main():
     pygame.init()
     print("Starting Asteroids!")
@@ -450,6 +466,7 @@ def main():
     game_state = GameState.TITLE
     difficulty = Difficulty.NORMAL
     while True:
+        #the game state determines what is on the screen at the time. 
         if game_state == GameState.TITLE:
             game_state = title_screen(screen, difficulty)
 

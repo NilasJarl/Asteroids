@@ -1,6 +1,6 @@
 import pygame
 
-
+#creates the text surfacen to display.
 def create_surface_with_text(text, font_size, text_rgb, bg_rgb):
     """ Returns surface with text written on """
     font = pygame.freetype.SysFont("Ariel", font_size, bold=True)

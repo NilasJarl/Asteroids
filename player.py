@@ -14,7 +14,8 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.timer = 0
-        self.player_num = player_num
+        self.player_num = player_num #plaer one or two
+        #player one is white player two is red.
         if self.player_num == 1:
             self.color = WHITE 
         elif self.player_num == 2:
@@ -40,12 +41,14 @@ class Player(CircleShape):
 
     def update(self, dt):
         self.timer -= dt
+        #if the player has a buff reduce the timer on the buff if time is out remove the buff from the player.
         if self.buff is not None:
             self.buff_timer -= dt
             if self.buff_timer <= 0:
                 self.buff = None
                 self.buff_timer = None
         keys = pygame.key.get_pressed()
+        #player one controls
         if self.player_num == 1:
             if keys[pygame.K_a]:
                 self.rotate(-dt)
@@ -57,6 +60,7 @@ class Player(CircleShape):
                 self.move(-dt)
             if keys[pygame.K_SPACE]:
                 self.shoot()
+        #player two controls.
         elif self.player_num == 2:
             if keys[pygame.K_LEFT]:
                 self.rotate(-dt)
@@ -73,20 +77,24 @@ class Player(CircleShape):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         self.position += forward * PLAYER_SPEED * dt
     
+    #add buff to the player and set the timer to the constand from constants.py
     def buff_player(self, buff):
         self.buff = buff
         self.buff_timer = BUFF_DURATION
 
 
     def shoot(self):
+        #only when the shot cooldown is 0 can you shoot.
         if not self.timer > 0:
             new_shot = Shot(self.position.x, self.position.y, SHOT_RADIUS, self.color)
             new_shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
+            #multishot spawns two extra show 10 degress to either side
             if self.buff == Buff.MULTISHOT:
                 new_shot2 = Shot(self.position.x, self.position.y, SHOT_RADIUS, self.color)
                 new_shot2.velocity = pygame.Vector2(0, 1).rotate(self.rotation - 10) * PLAYER_SHOOT_SPEED
                 new_shot3 = Shot(self.position.x, self.position.y, SHOT_RADIUS, self.color)
                 new_shot3.velocity = pygame.Vector2(0, 1).rotate(self.rotation + 10) * PLAYER_SHOOT_SPEED
+            #reset the shot cooldown, with teh machinegun buff it is on third of the CD from constants.py
             if self.buff == Buff.MACHINEGUN:
                 self.timer = PLAYER_SHOOT_COOLDOWN / 3
             else:

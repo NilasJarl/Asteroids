@@ -28,7 +28,7 @@ class Asteroid(CircleShape):
         new_asteroid2 = Asteroid(self.position.x, self.position.y, new_radius)
         new_asteroid2.velocity = self.velocity.rotate(-random_angle) * 1.2
 
-
+#buff roids are similar to asteroids but far less complex when hit it simply returns what type of buff it is. the buffs are an enum defines in player.py
 class Buffoid(CircleShape):
     def __init__(self, x, y, radius):
         super().__init__(x, y, radius)
