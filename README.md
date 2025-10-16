@@ -29,7 +29,7 @@ Mouse for menu navigation
 
 In game:  
 Player 1: Movement: WASD + Fire: Space  
-Player 2: Movement: Arrow Keys + Fire: Left Ctrl  
+Player 2: Movement: Arrow Keys + Fire: Right Ctrl  
 
 ## Resolution selection
 Allows for switching between the following windowed resolutions:
@@ -50,7 +50,7 @@ Three buff type, shot or fly into the coloroed Asteroids to get them, they last 
 - Multishot, shot three shots per shot in a fan shape, given by Red Asteroids
 - Machinegun, triple the rate of fire, given by Blue Asteroids
 - Invulnerability, Unable to die, given by Green Asteroids  
-_Note: Not points will be given for asteroids destroyed by hitting them with ship while invulnerable_
+_Note: No points will be given for asteroids destroyed by hitting them with ship while invulnerable_
 
 ## Requirements
 - Python 3.10+
@@ -83,6 +83,7 @@ Using Python:
 ```bash
 python main.py
 ```
+
 
 
 
